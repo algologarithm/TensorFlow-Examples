@@ -1,7 +1,7 @@
-""" Neural Network.
+""" Neural Network with Eager API.
 
 A 2-Hidden Layers Fully Connected Neural Network (a.k.a Multilayer Perceptron)
-implementation with TensorFlow. This example is using the MNIST database
+implementation with TensorFlow's Eager API. This example is using the MNIST database
 of handwritten digits (http://yann.lecun.com/exdb/mnist/).
 
 This example is using TensorFlow layers, see 'neural_network_raw' example for
@@ -16,10 +16,10 @@ Project: https://github.com/aymericdamien/TensorFlow-Examples/
 from __future__ import print_function
 
 import tensorflow as tf
-import tensorflow.contrib.eager as tfe
 
 # Set Eager API
-tfe.enable_eager_execution()
+tf.enable_eager_execution()
+tfe = tf.contrib.eager
 
 # Import MNIST data
 from tensorflow.examples.tutorials.mnist import input_data
@@ -39,7 +39,8 @@ num_classes = 10 # MNIST total classes (0-9 digits)
 
 # Using TF Dataset to split data into batches
 dataset = tf.data.Dataset.from_tensor_slices(
-    (mnist.train.images, mnist.train.labels)).batch(batch_size)
+    (mnist.train.images, mnist.train.labels))
+dataset = dataset.repeat().batch(batch_size).prefetch(batch_size)
 dataset_iter = tfe.Iterator(dataset)
 
 
@@ -92,12 +93,7 @@ average_acc = 0.
 for step in range(num_steps):
 
     # Iterate through the dataset
-    try:
-        d = dataset_iter.next()
-    except StopIteration:
-        # Refill queue
-        dataset_iter = tfe.Iterator(dataset)
-        d = dataset_iter.next()
+    d = dataset_iter.next()
 
     # Images
     x_batch = d[0]

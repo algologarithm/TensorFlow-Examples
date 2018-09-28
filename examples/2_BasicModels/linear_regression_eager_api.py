@@ -1,7 +1,6 @@
-'''
-A logistic regression learning algorithm example using TensorFlow library.
-This example is using the MNIST database of handwritten digits
-(http://yann.lecun.com/exdb/mnist/)
+''' Linear Regression with Eager API.
+
+A linear regression learning algorithm example using TensorFlow's Eager API.
 
 Author: Aymeric Damien
 Project: https://github.com/aymericdamien/TensorFlow-Examples/
@@ -11,10 +10,10 @@ from __future__ import absolute_import, division, print_function
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
-import tensorflow.contrib.eager as tfe
 
 # Set Eager API
-tfe.enable_eager_execution()
+tf.enable_eager_execution()
+tfe = tf.contrib.eager
 
 # Training Data
 train_X = [3.3, 4.4, 5.5, 6.71, 6.93, 4.168, 9.779, 6.182, 7.59, 2.167,

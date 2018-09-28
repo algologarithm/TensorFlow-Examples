@@ -1,5 +1,6 @@
-'''
-A logistic regression learning algorithm example using TensorFlow library.
+''' Logistic Regression with Eager API.
+
+A logistic regression learning algorithm example using TensorFlow's Eager API.
 This example is using the MNIST database of handwritten digits
 (http://yann.lecun.com/exdb/mnist/)
 
@@ -9,10 +10,10 @@ Project: https://github.com/aymericdamien/TensorFlow-Examples/
 from __future__ import absolute_import, division, print_function
 
 import tensorflow as tf
-import tensorflow.contrib.eager as tfe
 
 # Set Eager API
-tfe.enable_eager_execution()
+tf.enable_eager_execution()
+tfe = tf.contrib.eager
 
 # Import MNIST data
 from tensorflow.examples.tutorials.mnist import input_data
@@ -25,7 +26,8 @@ num_steps = 1000
 display_step = 100
 
 dataset = tf.data.Dataset.from_tensor_slices(
-    (mnist.train.images, mnist.train.labels)).batch(batch_size)
+    (mnist.train.images, mnist.train.labels))
+dataset = dataset.repeat().batch(batch_size).prefetch(batch_size)
 dataset_iter = tfe.Iterator(dataset)
 
 # Variables
@@ -63,12 +65,7 @@ average_acc = 0.
 for step in range(num_steps):
 
     # Iterate through the dataset
-    try:
-        d = dataset_iter.next()
-    except StopIteration:
-        # Refill queue
-        dataset_iter = tfe.Iterator(dataset)
-        d = dataset_iter.next()
+    d = dataset_iter.next()
 
     # Images
     x_batch = d[0]
